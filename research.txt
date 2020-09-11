@@ -1,0 +1,19 @@
+#Idea
+
+A project on Covid 19 data using AWS services like Lamba, RDS, SAM which can send an email and sms based on the logic written in the Lambda. 
+
+
+
+# Intial planning
+
+1) Search for an api online with covid cases in St.louis or Unites states
+
+2) Write a Python program to get the the date from api and draw an matplot of the surge in the cases
+
+3) Write sam template to build the infrastructure on AWS cloud with Lambda function and other resources
+
+4) Now, write the Python code into the lambda function which needs to be triggered daily at 7 am and send an sms and email with the matplot graphs
+
+5) Logic in the code should compare the data from previous day's data and tell if it's safe to go out
+
+6) This project should be able to integrate with a Machine Learning model with the data collected. 

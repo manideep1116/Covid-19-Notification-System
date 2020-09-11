@@ -1,0 +1,6 @@
+--> speak to virinchi about the data in csv
+--> Get daily data and look for matplot
+--> Look for an api with historical data
+--> Find ways to apply numpy and pandas
+--> Make a plan for next week by end of the weekend.
+
