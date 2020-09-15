@@ -5,9 +5,7 @@ from datetime import datetime, date
 import pandas as pd
 
 r_county = 'https://covid19-us-api.herokuapp.com/county'
-r_zipcode = "https://services2.arcgis.com/w657bnjzrjguNyOy/arcgis/rest/services/covid19_by_zip_expanded_1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
-# r_zipcode = 'https://opendata.arcgis.com/datasets/7ad849e453684ea09f92ac56bd97a08e_0.geojson'
-#https://data-stlcogis.opendata.arcgis.com/datasets/covid-19-zip-code-data-w-past-14-days/geoservice?page=5&selectedAttribute=cases_new
+r_zipcode = 'https://opendata.arcgis.com/datasets/7ad849e453684ea09f92ac56bd97a08e_0.geojson'
 #r_state =  'https://covidtracking.com/api/states'
 r_state = 'https://covidtracking.com/api/states/daily'
 now = datetime.now()
@@ -57,25 +55,17 @@ def cases_MO(state_url):
 #     return filename
 
 
-# def cases_zip(zip_url):
-#     with requests.get(zip_url) as r_zip:
-#         cases = json.loads(r_zip.text)
-#         for i in range(len(cases['features'])):
-#             if cases['features'][i]['properties']['zip_5'] ==63146:
-#                 #f.write('The number of total cases in the zip code 63146 are '+ "'"+ str(cases['features'][i]['properties']['cases'])+ "'"+" on " +str( time)+"\n"*2)
-#                 return cases['features'][i]['properties']['cases']
-#                 break
-
-
 def cases_zip(zip_url):
     with requests.get(zip_url) as r_zip:
         cases = json.loads(r_zip.text)
         for i in range(len(cases['features'])):
-            if cases['features'][i]['attributes']['zip_5'] ==63146:
+            if cases['features'][i]['properties']['zip_5'] ==63146:
                 #f.write('The number of total cases in the zip code 63146 are '+ "'"+ str(cases['features'][i]['properties']['cases'])+ "'"+" on " +str( time)+"\n"*2)
-                #{'zip_5': 63025, 'cases_total': 291, 'cases_new': 50, 'cases_new_youth': 0, 'population': 8369, 'population_youth': 2589, 'cases_total_100k': 3477.1, 'cases_new_100k': 597.4, 'cases_new_youth_100k': '0', 'ObjectId': 1}
-                return cases['features'][i]['attributes']['cases_new']
+                return cases['features'][i]['properties']['cases']
                 break
+
+
+
 
 
 
