@@ -1,6 +1,5 @@
---> speak to virinchi about the data in csv
---> Get daily data and look for matplot
---> Look for an api with historical data
+--> Write logic to compare the previous cases and tell the surge
+  for example: today's cases are maz of all the values and we are in danger zone, if the value is min of all then green zone, if the values are not min and max compare for last 7 values and find min and max and do the same thing. if both the cases are not true then compare with the last three days cases. May we need to write a while loop or for loop for this.
 --> Find ways to apply numpy and pandas
 --> Make a plan for next week by end of the weekend.
 

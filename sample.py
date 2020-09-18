@@ -3,6 +3,7 @@ import json
 import csv  
 from datetime import datetime, date
 import pandas as pd
+import matplotlib.pyplot as plt
 
 r_county = 'https://covid19-us-api.herokuapp.com/county'
 r_zipcode = "https://services2.arcgis.com/w657bnjzrjguNyOy/arcgis/rest/services/covid19_by_zip_expanded_1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
@@ -151,7 +152,68 @@ def writer(filename):
 
 
 
-writer('cases.csv')
+# condition = True
+# if condition:
+#     writer('cases.csv')
+#     condition = False
+
+
+# # Import data
+# if not condition:
+#     data = pd.read_csv('cases.csv', encoding = 'utf-8').fillna(0)
+
+
+
+data = pd.read_csv('cases.csv', encoding = 'utf-8').fillna(0)
+zc = data['Zip'] .iloc[0:].values
+county = data['County'] .iloc[0:].values
+state = data['State'] .iloc[0:].values
+
+print(max(zc),max(county),max(state))
+
+
+# # Graph plottinf=g
+# x = data['Zip'] #.iloc[0:10].values
+# y = data['Date'] #.iloc[0:10].values
+# z = data['County']
+# s = data['State']
+
+# fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
+# fig.suptitle('Plot of historic covid-19 data till today', color='crimson', fontname="Times New Roman",fontweight="bold")
+# ax1.plot(y, x, color='mediumvioletred')
+# ax1.legend(['Zipcode: 63146'])
+# ax1.xaxis.set_tick_params(rotation=18, labelsize=10)
+
+
+# ax2.plot(y,z,color='blue')
+# ax2.legend(['County'])
+# ax2.xaxis.set_tick_params(rotation=18, labelsize=10)
+
+# ax3.plot(y,s,color='brown')
+# ax3.legend(['Missouri'])
+# ax3.xaxis.set_tick_params(rotation=18, labelsize=10)
+
+# for ax in (ax1, ax2, ax3):
+#     ax.set(xlabel='Dates', ylabel='New Covid-19 cases daily')
+
+# plt.show()
+# #fig.savefig("plot.png")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #case_MO(r_state,'statecases.csv')
 #cases_MO(r_state,'testing_statecases.txt')
