@@ -169,7 +169,11 @@ zc = data['Zip'] .iloc[0:].values
 county = data['County'] .iloc[0:].values
 state = data['State'] .iloc[0:].values
 
-print(max(zc),max(county),max(state))
+hz = data.loc[data['Zip'] == max(zc), 'Date'].iloc[0]
+hc = data.loc[data['County'] == max(county), 'Date'].iloc[0]
+hs = data.loc[data['State'] == max(state), 'Date'].iloc[0]
+print('Highest number of new cases in MO state is on {} with {}\nHighest number of new cases in St.louis county is on {} with {}\nHighest number of new cases in 63146 Zip code is on {} with {}'.format(hs,max(state),hc,max(county),hz,max(zc)))
+#print(max(zc),max(county),max(state))
 
 
 # # Graph plottinf=g
