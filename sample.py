@@ -15,6 +15,19 @@ now = datetime.now()
 today = date.today()
 time = today.strftime("%m/%d/%y")
 
+# Setting threshold for number of cases in zip, state and county
+dangerzone_zip = 50
+dangerzone_state = 1400
+dangerzone_county = 200
+
+moderatezone_zip = 25
+moderatezone_state = 700
+moderatezone_county = 100
+
+safezone_zip = 5
+safezone_state = 200
+safezone_county = 20 
+
 # def cases_MO(state_url,filename=''):
 #   if filename:
 #       pass
@@ -172,8 +185,45 @@ state = data['State'] .iloc[0:].values
 hz = data.loc[data['Zip'] == max(zc), 'Date'].iloc[0]
 hc = data.loc[data['County'] == max(county), 'Date'].iloc[0]
 hs = data.loc[data['State'] == max(state), 'Date'].iloc[0]
-print('Highest number of new cases in MO state is on {} with {}\nHighest number of new cases in St.louis county is on {} with {}\nHighest number of new cases in 63146 Zip code is on {} with {}'.format(hs,max(state),hc,max(county),hz,max(zc)))
+#print('Highest number of new cases in MO state is on \'{}\' with \'{}\'\nHighest number of new cases in St.louis county is on \'{}\' with \'{}\'\nHighest number of new cases in 63146 Zip code is on \'{}\' with \'{}\'\n'.format(hs,max(state),hc,max(county),hz,max(zc)))
+
+ 
+cases_today_zip =data.loc[data['Date'] == time, 'Zip'].iloc[0]
+cases_today_state = data.loc[data['Date'] == time, 'State'].iloc[0]
+cases_today_county = data.loc[data['Date'] == time, 'County'].iloc[0]
+
+# Warning for zip code cases
+if cases_today_zip== max(zc):
+    print('ZipCode 63146 is in Danger Zone with maximum number of cases \'{}\'! Stay home and Stay safe!\nHighest number of new cases in 63146 Zip code was on \'{}\' with \'{}\'\n'.format(cases_today_zip,hz,max(zc)))
+elif cases_today_zip >= dangerzone_zip:
+    print('ZipCode 63146 is in Danger Zone with \'{}\' cases! Stay home and Stay safe!\nHighest number of new cases in 63146 Zip code was on \'{}\' with \'{}\'\n'.format(cases_today_zip,hz,max(zc)))
+elif cases_today_zip <= safezone_zip:
+    print('ZipCode 63146 is in Safe Zone with \'{}\' cases! Wear a mask and carry Sanitizer while going out.\nHighest number of new cases in 63146 Zip code was on \'{}\' with \'{}\'\n'.format(cases_today_zip,hz,max(zc)))
+elif cases_today_zip > safezone_zip and cases_today_zip <= moderatezone_zip:
+    print('ZipCode 63146 is in Moderate Zone with \'{}\' cases! Wear a mask and carry Sanitizer  while going out.\nHighest number of new cases in 63146 Zip code was on \'{}\' with \'{}\'\n'.format(cases_today_zip,hz,max(zc)))
+
+# Warning for county cases
+if cases_today_county== max(zc):
+    print('St.Louis County is in Danger Zone with maximum number of cases \'{}\'! Stay home and Stay safe!\nHighest number of new cases in St.louis county was on \'{}\' with \'{}\'\n'.format(cases_today_zip),hc,max(county))
+elif cases_today_county >= dangerzone_zip:
+    print('St.Louis County is in Danger Zone with \'{}\' cases! Stay home and Stay safe!\nHighest number of new cases in St.louis county was on \'{}\' with \'{}\'\n'.format(cases_today_county,hc,max(county)))
+elif cases_today_county <= safezone_zip:
+    print('St.Louis County  is in Safe Zone with \'{}\' cases! Wear a mask and carry Sanitizer while going out.\nHighest number of new cases in St.louis county was on \'{}\' with \'{}\'\n'.format(cases_today_county,hc,max(county)))
+elif cases_today_county > safezone_zip and cases_today_county <= moderatezone_zip:
+    print('St.Louis County  is in Moderate Zone with \'{}\' cases! Wear a mask and carry Sanitizer  while going out.\nHighest number of new cases in St.louis county was on \'{}\' with \'{}\'\n'.format(cases_today_county,hc,max(county)))
+
 #print(max(zc),max(county),max(state))
+
+# Warning for State cases
+if cases_today_state == max(zc):
+    print('Missouri state is in Danger Zone with maximum number of cases \'{}\'! Stay home and Stay safe!\nHighest number of new cases in MO state was on \'{}\' with \'{}\'\n'.format(cases_today_state),hs,max(state))
+elif cases_today_state >= dangerzone_zip:
+    print('Missouri state is in Danger Zone with \'{}\' cases! Stay home and Stay safe!\nHighest number of new cases in MO state was on \'{}\' with \'{}\'\n'.format(cases_today_state,hs,max(state)))
+elif cases_today_state<= safezone_zip:
+    print('Missouri state is in Safe Zone with \'{}\' cases! Wear a mask and carry Sanitizer while going out.\nHighest number of new cases in MO state was on \'{}\' with \'{}\'\n'.format(cases_today_state,hs,max(state)))
+elif cases_today_state > safezone_zip and cases_today_state <= moderatezone_zip:
+    print('Missouri state  is in Moderate Zone with \'{}\' cases! Wear a mask and carry Sanitizer while going out.\nHighest number of new cases in MO state was on \'{}\' with \'{}\'\n'.format(cases_today_state,hs,max(state)))
+
 
 
 # # Graph plottinf=g
