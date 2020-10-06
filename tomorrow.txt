@@ -5,3 +5,8 @@
 --> Find ways to apply numpy and pandas
 --> Make a plan for next week by end of the weekend.
 
+
+--> Figure out pandas and mumpy for the lamda and test it
+--> Build sam template and test it before leaving to Rockford.
+--> Use webscrapping to get the county values as the plan B and use Alexa skill development as plan C.(learn about scrappy in python for web scrapping.)
+
