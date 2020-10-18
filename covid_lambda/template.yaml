@@ -1,0 +1,169 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  CovidBucketName: 
+    Default: 'covid-project-testing'
+    Description: S3 bucket to store the csv file with covid cases.
+    Type: String
+
+Resources:
+  CovidLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: CovidFuncitonLayer
+      Description: Layer for pandas, numpy, requests and os libraries.
+      ContentUri: ./Layers
+      CompatibleRuntimes:
+        - python3.6
+        - python3.7
+        - python3.8
+      RetentionPolicy: Retain
+
+  CovidLambdaSMSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription:
+        - Endpoint: '+15512275351'
+          Protocol: sms
+        # - Endpoint: '+12163528981'
+        #   Protocol: sms
+  
+  # CovidLambdaEmailTopic:
+  #   Type: AWS::SNS::Topic
+  #   Properties:
+  #     Subscription:
+  #       - Endpoint: manideepreddy1116@gmail.com
+  #         Protocol: email
+
+  CovidFunctionRole:
+      Type: AWS::IAM::Role
+      Properties:
+        Path: /
+        RoleName: Covid-Function-Role
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: Covid-Function-Policy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow 
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource: "*"
+                - Effect: Allow
+                  Action: 
+                    - sns:Publish
+                  Resource: "*"
+                - Effect: "Allow"
+                  Action:
+                    - s3:GetObject
+                    - s3:ListBucket
+                    - s3:GetBucketLocation
+                    - s3:GetObjectVersion
+                    - s3:PutObject
+                    - s3:PutObjectAcl
+                    - s3:GetLifecycleConfiguration
+                    - s3:PutLifecycleConfiguration
+                    - s3:DeleteObject
+                  Resource:
+                    - !Sub "arn:aws:s3:::${CovidBucketName}"
+                    - !Sub "arn:aws:s3:::${CovidBucketName}/*"
+                   
+
+  CovidLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: 'Covid-Lambda'
+      Runtime: python3.6
+      CodeUri: code/
+      Handler: lambda_function.lambda_handler
+      Timeout: 220
+      MemorySize: 512
+      Layers:
+        - !Ref CovidLambdaLayer
+      Role: !GetAtt CovidFunctionRole.Arn
+      Environment:
+        Variables: 
+          bucket: !Ref CovidBucketName
+          sns_sms: !Ref CovidLambdaSMSTopic
+          #sns_email: !Ref CovidLambdaEmailTopic
+      # Events:
+      #   ScheduleEvent:
+      #     Type: Schedule
+      #     Properties: cron(15 23 * * ? *)
+
+  
+
+
+  CovidLambdaScheduledRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: 'CovidLambda-scheduled-rule'
+      ScheduleExpression: cron(40 3 * * ? *) # Daily 22:40 pm cst i.e 4:15 am in UTC
+      #ScheduleExpression: cron(0/3 * * * ? *) # Every 5 mins
+      State: ENABLED
+      Targets: 
+        - 
+          Arn: !GetAtt CovidLambda.Arn
+          Id: AWSCovidFunction
+
+  
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref CovidLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt CovidLambdaScheduledRule.Arn
+  
+  
+        
+
+
+
+
+#           Description: >-
+#   Schedule - the infrastructure.
+# AWSTemplateFormatVersion: 2010-09-09
+# Transform: "AWS::Serverless-2016-10-31"
+# Resources:
+#   NotifierLambda:
+#     Type: AWS::Serverless::Function
+#     Properties:
+#       FunctionName: 'notifier'
+#       Handler: index.handler
+#       CodeUri: 's3://deegloo-blog-post/schedule-notify-trigger/notifier-partial.zip'
+#       Runtime: nodejs6.10
+#       MemorySize: 1536
+#       Timeout: 300
+#       Environment:
+#         Variables:
+#           SOME_VARIABLE: 'some-value'
+#   NotifierLambdaScheduledRule:
+#     Type: AWS::Events::Rule
+#     Properties:
+#       Name: 'notifier-scheduled-rule'
+#       Description: 'Triggers notifier lambda once per day'
+#       ScheduleExpression: cron(0 7 ? * * *)
+#       State: ENABLED
+#       Targets:
+#         -
+#           Arn: !GetAtt NotifierLambda.Arn
+#           Id: AWSCovidFunction
+
+#   NotifierLambdaInvokePermission:
+#     Type: AWS::Lambda::Permission
+#     Properties:
+#       FunctionName: !Ref NotifierLambda
+#       Action: lambda:InvokeFunction
+#       Principal: events.amazonaws.com
+#       SourceArn: !GetAtt NotifierLambdaScheduledRule.Arn

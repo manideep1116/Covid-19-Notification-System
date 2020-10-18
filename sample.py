@@ -209,8 +209,8 @@ elif cases_today_zip > safezone_zip and cases_today_zip <= moderatezone_zip:
     print('ZipCode 63146 is in Moderate Zone with \'{}\' cases! Wear a mask and carry Sanitizer  while going out.\nHighest number of new cases in 63146 Zip code was on \'{}\' with \'{}\'\n'.format(cases_today_zip,hz,max(zc)))
 
 # Warning for county cases
-if cases_today_county== max(zc):
-    print('St.Louis County is in Danger Zone with maximum number of cases \'{}\'! Stay home and Stay safe!\nHighest number of new cases in St.louis county recorded today \'{}\' with \'{}\'\n'.format(cases_today_zip),hc,max(county))
+if cases_today_county== max(county):
+    print('St.Louis County is in Danger Zone with maximum number of cases \'{}\'! Stay home and Stay safe!\nHighest number of new cases in St.louis county recorded today \'{}\' with \'{}\'\n'.format(cases_today_county,hc,max(county)))
 elif cases_today_county >= dangerzone_county:
     print('St.Louis County is in Danger Zone with \'{}\' cases! Stay home and Stay safe!\nHighest number of new cases in St.louis county was on \'{}\' with \'{}\'\n'.format(cases_today_county,hc,max(county)))
 elif cases_today_county <= safezone_county:
@@ -223,8 +223,8 @@ elif cases_today_county > safezone_county and cases_today_county <= moderatezone
 #print(max(zc),max(county),max(state))
 
 # Warning for State cases
-if cases_today_state == max(zc):
-    print('Missouri state is in Danger Zone with maximum number of cases \'{}\'! Stay home and Stay safe!\nHighest number of new cases in MO state recorded today \'{}\' with \'{}\'\n'.format(cases_today_state),hs,max(state))
+if cases_today_state == max(state):
+    print('Missouri state is in Danger Zone with maximum number of cases \'{}\'! Stay home and Stay safe!\nHighest number of new cases in MO state recorded today \'{}\' with \'{}\'\n'.format(cases_today_state,hs,max(state)))
 elif cases_today_state >= dangerzone_state:
     print('Missouri state is in Danger Zone with \'{}\' cases! Stay home and Stay safe!\nHighest number of new cases in MO state was on \'{}\' with \'{}\'\n'.format(cases_today_state,hs,max(state)))
 elif cases_today_state<= safezone_state:

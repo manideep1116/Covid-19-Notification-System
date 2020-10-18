@@ -166,22 +166,87 @@ def cases_county(county_url):
 #          #json.dump(MO_cases, f, sort_keys = True, indent = 4)
 #    return filename 
 def writer(lamba_local_file):
-    s3.Bucket(covid_bucket).download_file(key,lamba_local_file)
+    #s3.Bucket(covid_bucket).download_file(key,lamba_local_file)
+    county= cases_county(r_county)
+    countycases = 0
     try:
         with open (lamba_local_file, 'a') as f:
+            csv_reader = pd.read_csv(lamba_local_file, encoding = 'utf-8').fillna(0)
             csv_writer = csv.writer(f,lineterminator='\n')
-            csv_writer.writerow([cases_MO(r_state), cases_county(r_county), cases_zip(r_zipcode),time])
-            
-        bucket.upload_file(lamba_local_file , key)
+            avg_county_values = csv_reader['County'].iloc[-1:-6:-1].values
+            if county == 0:
+                countycases = sum(avg_county_values)//len(avg_county_values)
+            else:
+                countycases = county
+
+            csv_writer.writerow([cases_MO(r_state), countycases, cases_zip(r_zipcode),time])
+        
+        data = pd.read_csv(lamba_local_file, encoding = 'utf-8').fillna(0)
+    
+        zc = data['Zip'] .iloc[0:].values
+        county = data['County'] .iloc[0:].values
+        state = data['State'] .iloc[0:].values
+
+        hz = data.loc[data['Zip'] == max(zc), 'Date'].iloc[0]
+        hc = data.loc[data['County'] == max(county), 'Date'].iloc[0]
+        hs = data.loc[data['State'] == max(state), 'Date'].iloc[0]
+        #print('Highest number of new cases in MO state is on \'{}\' with \'{}\'\nHighest number of new cases in St.louis county is on \'{}\' with \'{}\'\nHighest number of new cases in 63146 Zip code is on \'{}\' with \'{}\'\n'.format(hs,max(state),hc,max(county),hz,max(zc)))
+
+ 
+        cases_today_zip =data.loc[data['Date'] == time, 'Zip'].iloc[0]
+        cases_today_state = data.loc[data['Date'] == time, 'State'].iloc[0]
+        cases_today_county = data.loc[data['Date'] == time, 'County'].iloc[0]
+        
+        print(sum(x[-1:-8:-1])/len(x))
+        #  # Warning for zip code cases
+        # if cases_today_zip== max(zc):
+        #     zip_cases='ZipCode 63146 is in Danger Zone with maximum number of new cases "'+ str(cases_today_zip) + '" today. Stay home and Stay safe!'
+        # elif cases_today_zip >= dangerzone_zip:
+        #     zip_cases='ZipCode 63146 is in Danger Zone with "'+ str(cases_today_zip) + '" new cases ! Stay home and Stay safe!'
+        # elif cases_today_zip <= safezone_zip:
+        #     zip_cases='ZipCode 63146 is in Safe Zone with "' + str(cases_today_zip) + '" new cases!  Wear a mask and carry Sanitizer while going out.'
+        # elif cases_today_zip > moderatezone_zip and cases_today_zip < dangerzone_zip:
+        #     zip_cases='ZipCode 63146 is in Cautious Zone with "' + str(cases_today_zip) + '" new cases !  Wear a mask and carry Sanitizer while going out.'
+        # elif cases_today_zip > safezone_zip and cases_today_zip <= moderatezone_zip:
+        #     zip_cases='ZipCode 63146 is in Moderate Zone with  "' + str(cases_today_zip) + '" new cases !  Wear a mask and carry Sanitizer while going out.'
+
+        # # Warning for county cases
+        # if cases_today_county== max(county):
+        #     county_cases='St.Louis County is in Danger Zone with maximum number of new cases "' + str(cases_today_county) +'" today. Stay home and Stay safe!'
+        # elif cases_today_county >= dangerzone_county:
+        #     county_cases='St.Louis County is in Danger Zone with "'+ str(cases_today_county) + '" new cases! Stay home and Stay safe!'
+        # elif cases_today_county <= safezone_county:
+        #     county_cases='St.Louis County  is in Safe Zone with "' + str(cases_today_county)+ '" new cases!  Wear a mask and carry Sanitizer while going out.'
+        # elif cases_today_county > moderatezone_county and cases_today_county < dangerzone_county:
+        #     county_cases='St.Louis County  is in Cautious Zone with  "' + str(cases_today_county) + '" new cases!  Wear a mask and carry Sanitizer while going out.'
+        # elif cases_today_county > safezone_county and cases_today_county <= moderatezone_county:
+        #     county_cases='St.Louis County  is in Moderate Zone with  "' + str(cases_today_county) + '" new cases!  Wear a mask and carry Sanitizer while going out.'
+
+        # #print(max(zc),max(county),max(state))
+
+        # # Warning for State cases
+        # if cases_today_state == max(state):
+        #     state_cases='Missouri state is in Danger Zone with maximum number of new cases "'+ str(cases_today_state) + '" today. Stay home and Stay safe!'
+        # elif cases_today_state >= dangerzone_state:
+        #     state_cases='Missouri state is in Danger Zone with "'+ str(cases_today_state) + '" new cases! Stay home and Stay safe!'
+        # elif cases_today_state<= safezone_state:
+        #     state_cases='Missouri state is in Safe Zone with  "' + str(cases_today_state) + '" new cases!  Wear a mask and carry Sanitizer while going out.'
+        # elif cases_today_state > moderatezone_state and cases_today_state < dangerzone_state:
+        #     state_cases='Missouri state  is in Cautious Zone with  "' + str(cases_today_state) + '" new cases!  Wear a mask and carry Sanitizer while going out.'
+        # elif cases_today_state > safezone_state and cases_today_state <= moderatezone_state:
+        #     state_cases='Missouri state  is in Moderate Zone with  "' + str(cases_today_state) + '" new cases!  Wear a mask and carry Sanitizer while going out.'
+        
+        # print(" Covid-19 Prevention Message from Manideep :)\n\nLife is precious, be careful and follow this message before you step out!\n\n{}\n\n{}\n\n{}".format(zip_cases, county_cases, state_cases))
+        # #bucket.upload_file(lamba_local_file , key)
         return {
             'message': 'success!!'
             }
     except Exception:
         return None
 
-
-lamba_local_file = '/tmp/covid_cases.csv'
-writer('/tmp/covid_cases.csv')
+lamba_local_file = 'covid_cases.csv'
+#lamba_local_file = '/tmp/covid_cases.csv'
+writer(lamba_local_file)
 
 # condition = True
 # if condition:
