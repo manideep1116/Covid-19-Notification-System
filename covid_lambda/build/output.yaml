@@ -14,8 +14,6 @@ Resources:
       ContentUri: s3://covid-project-testing/b37751701fe79efb84bbde0c5852822c
       CompatibleRuntimes:
       - python3.6
-      - python3.7
-      - python3.8
       RetentionPolicy: Retain
   CovidLambdaSMSTopic:
     Type: AWS::SNS::Topic
@@ -90,7 +88,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       Name: CovidLambda-scheduled-rule
-      ScheduleExpression: cron(40 3 * * ? *)
+      ScheduleExpression: cron(15 4 * * ? *)
       State: ENABLED
       Targets:
       - Arn:

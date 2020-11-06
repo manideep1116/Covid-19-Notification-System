@@ -176,6 +176,7 @@ def lambda_handler(event, context):
             state_cases='Missouri state  is in Moderate Zone with  "' + str(cases_today_state) + '" new cases!  Wear a mask and carry Sanitizer while going out.'
         
         notification(" Covid-19 Prevention Message from Manideep :)\n\nLife is precious, be careful and follow this message before you step out!\n\n{}\n\n{}\n\n{}".format(zip_cases, county_cases, state_cases))
+        #email()
         bucket.upload_file(lamba_local_file , key)
         return {
             'message': 'success!!'
@@ -251,34 +252,32 @@ def lambda_handler(event, context):
 
 
 
-# # Graph plottinf=g
-# x = data['Zip'] #.iloc[0:10].values
-# y = data['Date'] #.iloc[0:10].values
-# z = data['County']
-# s = data['State']
+# Graph plottinf=g
+x = data['Zip'] #.iloc[0:10].values
+y = data['Date'] #.iloc[0:10].values
+z = data['County']
+s = data['State']
 
-# fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
-# fig.suptitle('Plot of historic covid-19 data till today', color='crimson', fontname="Times New Roman",fontweight="bold")
-# ax1.plot(y, x, color='mediumvioletred')
-# ax1.legend(['Zipcode: 63146'])
-# ax1.xaxis.set_tick_params(rotation=18, labelsize=10)
-
-
-# ax2.plot(y,z,color='blue')
-# ax2.legend(['County'])
-# ax2.xaxis.set_tick_params(rotation=18, labelsize=10)
-
-# ax3.plot(y,s,color='brown')
-# ax3.legend(['Missouri'])
-# ax3.xaxis.set_tick_params(rotation=18, labelsize=10)
-
-# for ax in (ax1, ax2, ax3):
-#     ax.set(xlabel='Dates', ylabel='New Covid-19 cases daily')
-
-# plt.show()
-# # #fig.savefig("plot.png")
+fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
+fig.suptitle('Plot of historic covid-19 data till today', color='crimson', fontname="Times New Roman",fontweight="bold")
+ax1.plot(y, x, color='mediumvioletred')
+ax1.legend(['Zipcode: 63146'])
+ax1.xaxis.set_tick_params(rotation=18, labelsize=10)
 
 
+ax2.plot(y,z,color='blue')
+ax2.legend(['County'])
+ax2.xaxis.set_tick_params(rotation=18, labelsize=10)
+
+ax3.plot(y,s,color='brown')
+ax3.legend(['Missouri'])
+ax3.xaxis.set_tick_params(rotation=18, labelsize=10)
+
+for ax in (ax1, ax2, ax3):
+    ax.set(xlabel='Dates', ylabel='New Covid-19 cases daily')
+
+plt.show()
+# #fig.savefig("plot.png")
 
 
 
@@ -293,3 +292,6 @@ def lambda_handler(event, context):
 
 
 
+
+
+# Lib in python Dash app

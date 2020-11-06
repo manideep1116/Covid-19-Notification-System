@@ -7,6 +7,8 @@ from selenium import webdriver
 import os
 import time
 
+
+
 #url="https://data-stlcogis.opendata.arcgis.com/app/st-louis-county-covid-19-statistics"
 url = "https://nytimes.com/interactive/2020/us/missouri-coronavirus-cases.html"
 driver = webdriver.Chrome(executable_path='/Users/manideep/practice/Git_hub/Covid-19-Tracker/scrapping/chromedriver')

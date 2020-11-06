@@ -15,8 +15,6 @@ Resources:
       ContentUri: ./Layers
       CompatibleRuntimes:
         - python3.6
-        - python3.7
-        - python3.8
       RetentionPolicy: Retain
 
   CovidLambdaSMSTopic:
@@ -108,8 +106,8 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       Name: 'CovidLambda-scheduled-rule'
-      ScheduleExpression: cron(40 3 * * ? *) # Daily 22:40 pm cst i.e 4:15 am in UTC
-      #ScheduleExpression: cron(0/3 * * * ? *) # Every 5 mins
+      ScheduleExpression: cron(15 5 * * ? *) # Daily 23:15 pm cst i.e 4:15 am in UTC
+      #ScheduleExpression: cron(0/3 * * * ? *) # Every 3 mins
       State: ENABLED
       Targets: 
         - 
@@ -120,7 +118,7 @@ Resources:
   LambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref CovidLambda
+      FunctionName: !Ref CovidLambda 
       Action: lambda:InvokeFunction
       Principal: events.amazonaws.com
       SourceArn: !GetAtt CovidLambdaScheduledRule.Arn
