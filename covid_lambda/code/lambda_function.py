@@ -109,6 +109,7 @@ def lambda_handler(event, context):
     try:
         with open (lamba_local_file, 'a') as f:
             csv_writer = csv.writer(f,lineterminator='\n')
+            csv_writer.writerow([cases_MO(r_state), cases_county(r_county), cases_zip(r_zipcode),time])
             #csv_reader = pd.read_csv(lamba_local_file, encoding = 'utf-8').fillna(0)
             # avg_county_values = csv_reader['County'].iloc[-1:-6:-1].values
             # if county == 0:
@@ -117,10 +118,6 @@ def lambda_handler(event, context):
             #     countycases = county
 
             # csv_writer.writerow([cases_MO(r_state), countycases, cases_zip(r_zipcode),time])
-        
-            csv_writer.writerow([cases_MO(r_state), cases_county(r_county), cases_zip(r_zipcode),time])
-            
-
         data = pd.read_csv(lamba_local_file, encoding = 'utf-8').fillna(0)
 
         zc = data['Zip'] .iloc[0:].values
@@ -253,30 +250,30 @@ def lambda_handler(event, context):
 
 
 # Graph plottinf=g
-x = data['Zip'] #.iloc[0:10].values
-y = data['Date'] #.iloc[0:10].values
-z = data['County']
-s = data['State']
+# x = data['Zip'] #.iloc[0:10].values
+# y = data['Date'] #.iloc[0:10].values
+# z = data['County']
+# s = data['State']
 
-fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
-fig.suptitle('Plot of historic covid-19 data till today', color='crimson', fontname="Times New Roman",fontweight="bold")
-ax1.plot(y, x, color='mediumvioletred')
-ax1.legend(['Zipcode: 63146'])
-ax1.xaxis.set_tick_params(rotation=18, labelsize=10)
+# fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
+# fig.suptitle('Plot of historic covid-19 data till today', color='crimson', fontname="Times New Roman",fontweight="bold")
+# ax1.plot(y, x, color='mediumvioletred')
+# ax1.legend(['Zipcode: 63146'])
+# ax1.xaxis.set_tick_params(rotation=18, labelsize=10)
 
 
-ax2.plot(y,z,color='blue')
-ax2.legend(['County'])
-ax2.xaxis.set_tick_params(rotation=18, labelsize=10)
+# ax2.plot(y,z,color='blue')
+# ax2.legend(['County'])
+# ax2.xaxis.set_tick_params(rotation=18, labelsize=10)
 
-ax3.plot(y,s,color='brown')
-ax3.legend(['Missouri'])
-ax3.xaxis.set_tick_params(rotation=18, labelsize=10)
+# ax3.plot(y,s,color='brown')
+# ax3.legend(['Missouri'])
+# ax3.xaxis.set_tick_params(rotation=18, labelsize=10)
 
-for ax in (ax1, ax2, ax3):
-    ax.set(xlabel='Dates', ylabel='New Covid-19 cases daily')
+# for ax in (ax1, ax2, ax3):
+#     ax.set(xlabel='Dates', ylabel='New Covid-19 cases daily')
 
-plt.show()
+# plt.show()
 # #fig.savefig("plot.png")
 
 

@@ -1,12 +1,14 @@
---> Write logic to compare the previous cases and tell the surge
-  for example: today's cases are max of all the values and we are in danger zone, if the value is min of all then green zone, if the values are not min and max compare for last 7 values and find min and max and do the same thing. if both the cases are not true then compare with the last three days cases. May we need to write a while loop or for loop for this.
-  ->Able to get the max values of the total data with the date. Try the rest.
-  -> Able to sort in zones write the code for the difference in the number of cases from yesterday and today.
---> Find ways to apply numpy and pandas
---> Make a plan for next week by end of the weekend.
+--> Able to sort in zones write the code for the difference in the number of cases from yesterday and today.
 
+###
+--> Complete Alexa work with all the required intents.
+--> Find covid 19 India data api.
+--> Plot graphs for the csv data.
+--> Research for dashboards using lambda.
 
-####Figure out pandas and mumpy for the lamda and test it
---> Build sam template and test it.
---> Use webscrapping to get the county values as the plan B and use Alexa skill development as plan C.(learn about scrappy in python for web scrapping.)
+### Today
+--> Complete MO intent, county intent, and zip code intent to get the data based on the requests.
+--> Return the zones as per the requests.
 --> 
+
+

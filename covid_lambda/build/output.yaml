@@ -68,7 +68,7 @@ Resources:
     Properties:
       FunctionName: Covid-Lambda
       Runtime: python3.6
-      CodeUri: s3://covid-project-testing/aa84fab4d5312dc125a98baf5f8ceb33
+      CodeUri: s3://covid-project-testing/108d59e3bd6832a1ecbd6a62e6d6e28c
       Handler: lambda_function.lambda_handler
       Timeout: 220
       MemorySize: 512
@@ -88,7 +88,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       Name: CovidLambda-scheduled-rule
-      ScheduleExpression: cron(15 4 * * ? *)
+      ScheduleExpression: cron(15 5 * * ? *)
       State: ENABLED
       Targets:
       - Arn:

@@ -1,0 +1,5 @@
+####Covid intent
+--> Give me covid summary around me
+--> Tell me about covid situation around me
+--> 
+
