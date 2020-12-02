@@ -99,25 +99,25 @@ Resources:
       #     Type: Schedule
       #     Properties: cron(15 23 * * ? *)
 
-  AlexaLambda:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: 'Covid-Lambda-Alexa-Skill'
-      Runtime: python3.6
-      CodeUri: code/
-      Handler: alexa_lambda_function.lambda_handler
-      Timeout: 220
-      MemorySize: 512
-      Layers:
-        - !Ref CovidLambdaLayer
-      Role: !GetAtt CovidFunctionRole.Arn
-      Environment:
-        Variables: 
-          bucket: !Ref CovidBucketName
-      # Events:
-      #   ScheduleEvent:
-      #     Type: Schedule
-      #     Properties: cron(15 23 * * ? *)
+  # AlexaLambda:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     FunctionName: 'Covid-Lambda-Alexa-Skill'
+  #     Runtime: python3.6
+  #     CodeUri: code/
+  #     Handler: alexa_lambda_function.lambda_handler
+  #     Timeout: 220
+  #     MemorySize: 512
+  #     Layers:
+  #       - !Ref CovidLambdaLayer
+  #     Role: !GetAtt CovidFunctionRole.Arn
+  #     Environment:
+  #       Variables: 
+  #         bucket: !Ref CovidBucketName
+  #     # Events:
+  #     #   ScheduleEvent:
+  #     #     Type: Schedule
+  #     #     Properties: cron(15 23 * * ? *)
 
 
 

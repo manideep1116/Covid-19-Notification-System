@@ -85,7 +85,7 @@ def cases_county(county_url):
     with requests.get(county_url) as r_county:
         cases=json.loads(r_county.text)
         for i in range(len(cases['message'])):
-            if cases['message'][i]['county_name']=='St. Louis':
+            if cases['message'][i]['state_name']== "Missouri" and cases['message'][i]['county_name']=='St. Louis':
                 #f.write('The number of new cases in St. Louis county are '+ "'"+str(cases['message'][i]['new'])+"'"+ " on "+ str( time)+ "\n")
                 return cases['message'][i]['new']
 

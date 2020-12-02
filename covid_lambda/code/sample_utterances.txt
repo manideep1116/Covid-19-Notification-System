@@ -1,5 +1,68 @@
 ####Covid intent
 --> Give me covid summary around me
 --> Tell me about covid situation around me
---> 
+#### Saint louis county
+what are the covid cases in {county} in last  {number} days
+give me the covid cases in {county} for last {number} days
+how many covid cases are there in my {county}
+what are the number of covid cases in {county}
+
+### MO
+give me the covid cases in {MO} for last {number} days
+what are the covid cases in {MO} in last {number} days
+what are the number of covid cases in {MO}
+how many covid cases are there in my {MO}
+
+
+## zipcode
+
+give me the covid cases in {zip} for last {number} days
+give me the covid cases in my zip code for last {number} days
+what are the number of covid cases in my {zip}
+how many covid cases are there in my {zip}
+
+
+### zip code surge
+what is the surge in number of covid cases in last {number} days in {four_digit}
+what is the surge in number of covid cases in last {number} days in my zip code
+what is the surge in number of covid cases in {four_digit}
+what is the surge in number of covid cases in my zip code
+
+### saint louis county surge
+
+what is the surge in number of covid cases in last {number} days in my county
+what is the surge in number of covid cases in last {number} days in saint louis county
+what is the surge in number of covid cases in saint louis county
+what is the surge in number of covid cases in my county
+
+### MO surge
+
+what is the surge in number of covid cases in last {number} days in {MO}
+what is the surge in number of covid cases in {MO}
+
+
+
+
+
+
+
+### covid
+what {zone} I am in
+what {zone} is {MO} in
+what {zone} is {county} in
+what {zone} is {zip} in
+what is the situation in {MO}
+what is the covid situation in {MO}
+what precautions should I take when going out
+do you think I am in safe area
+what is the situation around me
+how can I prevent covid nineteen
+what zone I am in
+describe the covid {zone}
+tell me some thing about the {zone} in covid prevention project
+what is the covid situation in my {zip}
+what is the covid situation in {county}
+
+
+#prevention 
 
