@@ -1,9 +1,0 @@
-#General info
-There are 41702 total zip code in usa in 50 states
-There are 1013 zip codes in MO.
-There are 114 counties in MO with 6.1 million population.
-There are 44 zip codes in St.Louis county. This is the most populous county with over 1 million population.
-A zipcode 63146 area is about 13 sq miles with 29,262 population with 4 mile radius and population density is 2090 per sq mile.
-
-
-
