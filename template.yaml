@@ -5,6 +5,22 @@ Parameters:
     Default: 'covid-project-testing'
     Description: S3 bucket to store the csv file with covid cases.
     Type: String
+  CountyUrl: 
+    Default: 'https://covid19-us-api.herokuapp.com/county'
+    Description: URL with covid-19 data in Counties in USA.
+    Type: String
+  StateUrl: 
+    Default: 'https://covidtracking.com/api/states/daily'
+    Description: URL with covid-19 data in Counties in USA.
+    Type: String
+  ZipUrl: 
+    Default: "https://services2.arcgis.com/w657bnjzrjguNyOy/arcgis/rest/services/covid19_by_zip_expanded_1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+    Description: URL with covid-19 data in ZipCodes in Missouri.
+    Type: String
+  AlexaSkillID:
+    Default: "amzn1.ask.skill.e3a39d69-2f2f-4458-8ea8-367207ab5789"
+    Description: Alexa skill ID
+    Type: String
 
 Resources:
   CovidLambdaLayer:
@@ -26,12 +42,7 @@ Resources:
         # - Endpoint: '+12163528981'
         #   Protocol: sms
   
-  # CovidLambdaEmailTopic:
-  #   Type: AWS::SNS::Topic
-  #   Properties:
-  #     Subscription:
-  #       - Endpoint: manideepreddy1116@gmail.com
-  #         Protocol: email
+
 
   CovidFunctionRole:
       Type: AWS::IAM::Role
@@ -93,33 +104,44 @@ Resources:
         Variables: 
           bucket: !Ref CovidBucketName
           sns_sms: !Ref CovidLambdaSMSTopic
-          #sns_email: !Ref CovidLambdaEmailTopic
-      # Events:
-      #   ScheduleEvent:
-      #     Type: Schedule
-      #     Properties: cron(15 23 * * ? *)
-
-  # AlexaLambda:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     FunctionName: 'Covid-Lambda-Alexa-Skill'
-  #     Runtime: python3.6
-  #     CodeUri: code/
-  #     Handler: alexa_lambda_function.lambda_handler
-  #     Timeout: 220
-  #     MemorySize: 512
-  #     Layers:
-  #       - !Ref CovidLambdaLayer
-  #     Role: !GetAtt CovidFunctionRole.Arn
-  #     Environment:
-  #       Variables: 
-  #         bucket: !Ref CovidBucketName
-  #     # Events:
-  #     #   ScheduleEvent:
-  #     #     Type: Schedule
-  #     #     Properties: cron(15 23 * * ? *)
+          County_url: !Ref CountyUrl
+          MO_url: !Ref StateUrl
+          Zip_url: !Ref ZipUrl
+  
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref CovidLambda 
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt CovidLambdaScheduledRule.Arn
 
 
+  AlexaLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: 'Covid-Lambda-Alexa-Skill'
+      Runtime: python3.6
+      CodeUri: code/
+      Handler: alexa_lambda_function.lambda_handler
+      Timeout: 220
+      MemorySize: 512
+      Layers:
+        - !Ref CovidLambdaLayer
+      Role: !GetAtt CovidFunctionRole.Arn
+      Environment:
+        Variables: 
+          bucket: !Ref CovidBucketName
+
+  
+
+  AlexaLambdaInvokePermisson:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref AlexaLambda
+      EventSourceToken: !Ref AlexaSkillID
+      Principal: 'alexa-appkit.amazon.com'
 
   CovidLambdaScheduledRule:
     Type: AWS::Events::Rule
@@ -134,13 +156,6 @@ Resources:
           Id: AWSCovidFunction
 
   
-  LambdaInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Ref CovidLambda 
-      Action: lambda:InvokeFunction
-      Principal: events.amazonaws.com
-      SourceArn: !GetAtt CovidLambdaScheduledRule.Arn
   
   
         

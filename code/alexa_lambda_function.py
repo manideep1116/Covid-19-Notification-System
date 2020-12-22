@@ -26,6 +26,9 @@ key = 'cases.csv'
 SKILL_NAME = "Covid nineteen prevention"
 
 def lambda_handler(event, context):
+    '''
+    Invoked when triggered by Alexa skill kit
+    '''
     local_file = '/tmp/covid_cases.csv'
     s3.Bucket(Covid_bucket).download_file(key,local_file)
     session  = event['session']
@@ -38,11 +41,12 @@ def lambda_handler(event, context):
         return ()
 
 def on_intent_request(intent_request,local_file):
+    '''
+    Finds the intent_name and handles it
+    '''
     intent =  intent_request['intent']
     intent_name = intent_request['intent']['name']
-    if intent_name == "hellointent":
-        return handle_hello_intent(intent)
-    elif intent_name == "CovidIntent":
+    if intent_name == "CovidIntent":
         return handle_covid_intent(intent,local_file)
    
     elif intent_name == "MissouriIntent":
@@ -58,8 +62,11 @@ def on_intent_request(intent_request,local_file):
         raise ValueError("unknown intent")
 
 def on_launch_request(launch_request):
+    '''
+    Prepare the response with welcome message
+    '''
     options = {}
-    options["SpeechText"] = "Welcome to Manideep's Covid nineteen prevention skill. Life is precious, be vigilant and use this project for your safety.  "
+    options["SpeechText"] = "Welcome to Manideep's Covid notification system skill. Life is precious, be vigilant and use this project for your safety.  "
     options["repromptText"] = "What do you want to know? For example you can ask for covid nineteen cases in Saint louis county or in zip code 63146. "
     options["endSession"] =  False
     return build_response(options)
@@ -118,15 +125,15 @@ def handle_covid_intent(intent, local_file):
     
     #
     if ('value' in intent['slots']['zone'] and 'value' in intent['slots']['MO']) or ('value' in intent['slots']['MO']) :
-        options["SpeechText"]= "Here is the data from Manideep's covid prevention project, "+ state_cases
+        options["SpeechText"]= "Here is the data from Manideep's covid notification project, "+ state_cases
     elif ('value' in intent['slots']['zone'] and 'value' in intent['slots']['county']) or ('value' in intent['slots']['county']):
-        options["SpeechText"]= "Here is the data from Manideep's covid prevention project, "+ county_cases
+        options["SpeechText"]= "Here is the data from Manideep's covid notification project, "+ county_cases
     elif ('value' in intent['slots']['zone'] and 'value' in intent['slots']['zip']) or ('value' in intent['slots']['zip']):
-        options["SpeechText"]= "Here is the data from Manideep's covid prevention project, "+ zip_cases  
+        options["SpeechText"]= "Here is the data from Manideep's covid notification project, "+ zip_cases  
     elif ('value' in intent['slots']['zone']):
-        options["SpeechText"]= "Here is the data from Manideep's covid prevention project, "+ zip_cases  
+        options["SpeechText"]= "Here is the data from Manideep's covid notification project, "+ zip_cases  
     else:
-        options["SpeechText"]= "Here is the data from Manideep's covid prevention project, Covid cases in Missouri are {}, cases in Saint Louis County are {}, and number of covid nineteen cases in your zipcode six three one four six are {}. Wear a mask while going out! ".format(state[-1], county[-1], zc[-1])
+        options["SpeechText"]= "Here is the data from Manideep's covid notification project, Covid cases in Missouri are {}, cases in Saint Louis County are {}, and number of covid nineteen cases in your zipcode six three one four six are {}. Wear a mask while going out! ".format(state[-1], county[-1], zc[-1])
 
    
     #
@@ -135,8 +142,12 @@ def handle_covid_intent(intent, local_file):
     options["cardContent"] = options["SpeechText"] 
     options["repromptText"] = "How can I help you with knowing more about covid cases around you?"
     return build_response(options)
-# //////////// intents for number of cases
+
+
 def handle_missouri_intent(intent, local_file):
+    '''
+    Prepare the response for Covid-19 cases in Missouri State
+    '''
     options = {}
     
     if 'value' in intent['slots']['number']:
@@ -147,11 +158,11 @@ def handle_missouri_intent(intent, local_file):
     data = pd.read_csv(local_file, encoding = 'utf-8').fillna(0)
     state = list(data['State'] .iloc[0:].values)
     if num == 1 or num ==0:
-        options["SpeechText"] = "Here is the data from Manideep's covid prevention project, today's Covid cases in Missouri are {}. ".format(state[-1])
+        options["SpeechText"] = "Here is the data from Manideep's covid notification project, today's Covid cases in Missouri are {}. ".format(state[-1])
     else:
         cases = ""
         for i in state[-num:]: cases+=str(i)+", "
-        options["SpeechText"] = "Here is the data from Manideep's covid prevention project, daily new Covid cases in Missouri for last {} days are {}. ".format(num,cases)
+        options["SpeechText"] = "Here is the data from Manideep's covid notification project, daily new Covid cases in Missouri for last {} days are {}. ".format(num,cases)
     options["endSession"] = False
     options["cardTitle"] = "hello {}. ".format(SKILL_NAME)
     options["cardContent"] = options["SpeechText"] 
@@ -161,6 +172,9 @@ def handle_missouri_intent(intent, local_file):
 
 
 def handle_saint_louis_intent(intent, local_file):
+    '''
+    Prepare the response for Covid-19 cases in St. Louis County
+    '''
     options = {}
     if 'value' in intent['slots']['number']:
         num = int(intent['slots']["number"]["value"])
@@ -170,11 +184,11 @@ def handle_saint_louis_intent(intent, local_file):
     data = pd.read_csv(local_file, encoding = 'utf-8').fillna(0)
     county = list(data['County'] .iloc[0:].values)
     if num == 1 or num ==0:
-        options["SpeechText"] = "Here is the data from Manideep's covid prevention project, today's Covid cases in Saint Louis county are {}. ".format(county[-1])
+        options["SpeechText"] = "Here is the data from Manideep's covid notification project, today's Covid cases in Saint Louis county are {}. ".format(county[-1])
     else:
         cases = ""
         for i in county[-num:]: cases+=str(i)+", "
-        options["SpeechText"] = "Here is the data from Manideep's covid prevention project, daily new ovid cases in Saint Louis County for last {} days are {}. ".format(num,cases)
+        options["SpeechText"] = "Here is the data from Manideep's covid notification project, daily new ovid cases in Saint Louis County for last {} days are {}. ".format(num,cases)
     options["endSession"] = False
     options["cardTitle"] = "hello {}. ".format(SKILL_NAME)
     options["cardContent"] = options["SpeechText"] 
@@ -182,6 +196,9 @@ def handle_saint_louis_intent(intent, local_file):
     return build_response(options)
 
 def handle_zipcode_intent(intent, local_file):
+    '''
+    Prepare response for Covid-19 cases in ZipCode
+    '''
     options = {}
     if 'value' in intent['slots']['number']:
         num = int(intent['slots']["number"]["value"])
@@ -191,11 +208,11 @@ def handle_zipcode_intent(intent, local_file):
     data = pd.read_csv(local_file, encoding = 'utf-8').fillna(0)
     Zip = list(data['Zip'] .iloc[0:].values)
     if num == 1 or num ==0:
-        options["SpeechText"] = "Here is the data from Manideep's covid prevention project, today's Covid cases in zip code six three one four six {}. ".format(Zip[-1])
+        options["SpeechText"] = "Here is the data from Manideep's covid notification project, today's Covid cases in zip code six three one four six {}. ".format(Zip[-1])
     else:
         cases = ""
         for i in Zip[-num:]: cases+=str(i)+", "
-        options["SpeechText"] = "Here is the data from Manideep's covid prevention project, daily new Covid cases in zip code six three one four six for last {} days are {}. ".format(num,cases)
+        options["SpeechText"] = "Here is the data from Manideep's covid notification project, daily new Covid cases in zip code six three one four six for last {} days are {}. ".format(num,cases)
     options["endSession"] = False
     options["cardTitle"] = "hello {}. ".format(SKILL_NAME)
     options["cardContent"] = options["SpeechText"] 
@@ -205,73 +222,53 @@ def handle_zipcode_intent(intent, local_file):
     
 
 def handle_mo_surge_intent(intent, local_file):
+    '''
+    Prepare response for surge in number of Covid-19 cases bases on the value in intent slots
+    '''
     options={}
     data = pd.read_csv(local_file, encoding = 'utf-8').fillna(0)
     Zip = list(data['Zip'] .iloc[0:].values) 
     county = list(data['County'] .iloc[0:].values)
     state = list(data['State'] .iloc[0:].values)
     
-     #
+     
     if ('value' in intent['slots']['MO']):
         if int(state[-1]-state[-2]) > 0 :
-            options["SpeechText"]= "Here is the data from Manideep's covid prevention project, there is a surge of {} cases in Missouiri today with {} new cases today. ".format(int(state[-1]-state[-2]),state[-1])
+            options["SpeechText"]= "Here is the data from Manideep's covid notification project, there is a surge of {} cases in Missouiri today with {} new cases today. ".format(int(state[-1]-state[-2]),state[-1])
         elif int(state[-1]-state[-2]) < 0:
-            options["SpeechText"] ="Here is the data from Manideep's covid prevention project, there is decrease in {} Covid cases in Missouri with {} new cases today. ".format(int(state[-2]-state[-1]),state[-1]) 
+            options["SpeechText"] ="Here is the data from Manideep's covid notification project, there is decrease in {} Covid cases in Missouri with {} new cases today. ".format(int(state[-2]-state[-1]),state[-1]) 
         else:
-            options["SpeechText"] ="Here is the data from Manideep's covid prevention project, there is no surge in the Covid cases in Missouri" 
+            options["SpeechText"] ="Here is the data from Manideep's covid notification project, there is no surge in the Covid cases in Missouri" 
     
     elif ('value' in intent['slots']['county']):
         if int(county[-1]-county[-2]) > 0 :
-            options["SpeechText"]= "Here is the data from Manideep's covid prevention project, there is a surge of {} cases in Saint Louis county today with {} new cases today. ".format(int(county[-1]-county[-2]),county[-1])
+            options["SpeechText"]= "Here is the data from Manideep's covid notification project, there is a surge of {} cases in Saint Louis county today with {} new cases today. ".format(int(county[-1]-county[-2]),county[-1])
         elif int(county[-1]-county[-2]) < 0:
-            options["SpeechText"] ="Here is the data from Manideep's covid prevention project, there is decrease in {} new Covid cases in Saint Louis county with {} new cases today. ".format(int(county[-2]-county[-1]),county[-1]) 
+            options["SpeechText"] ="Here is the data from Manideep's covid notification project, there is decrease in {} new Covid cases in Saint Louis county with {} new cases today. ".format(int(county[-2]-county[-1]),county[-1]) 
         else:
-            options["SpeechText"] ="Here is the data from Manideep's covid prevention project, there is no surge in the Covid cases in Saint Louis county" 
+            options["SpeechText"] ="Here is the data from Manideep's covid notification project, there is no surge in the Covid cases in Saint Louis county" 
    
     else:
         if int(Zip[-1]-Zip[-2]) > 0 :
-            options["SpeechText"]= "Here is the data from Manideep's covid prevention project, there is a surge of {} cases in zip code six three one four six today with {} new cases today. ".format(int(Zip[-1]-Zip[-2]),Zip[-1])
+            options["SpeechText"]= "Here is the data from Manideep's covid notification project, there is a surge of {} cases in zip code six three one four six today with {} new cases today. ".format(int(Zip[-1]-Zip[-2]),Zip[-1])
         elif int(Zip[-1]-Zip[-2]) < 0:
-            options["SpeechText"] ="Here is the data from Manideep's covid prevention project, there is decrease in {} Covid cases in zip code six three one four six with {} new cases today. ".format(int(Zip[-2]-Zip[-1]),Zip[-1]) 
+            options["SpeechText"] ="Here is the data from Manideep's covid notification project, there is decrease in {} Covid cases in zip code six three one four six with {} new cases today. ".format(int(Zip[-2]-Zip[-1]),Zip[-1]) 
         else:
-            options["SpeechText"] ="Here is the data from Manideep's covid prevention project, there is no surge in the Covid cases in zip code six three one four six " 
+            options["SpeechText"] ="Here is the data from Manideep's covid notification project, there is no surge in the Covid cases in zip code six three one four six " 
 
     options["endSession"] = False
     options["cardTitle"] = "hello {}. ".format(SKILL_NAME)
     options["cardContent"] = options["SpeechText"] 
     options["repromptText"] = "How can I help you with knowing more about covid cases around you?"
     return build_response(options)
-
-
-
-def handle_hello_intent(intent):
-    options={}
-    name = intent['slots']["Firstname"]["value"]
-    options["SpeechText"] = "Welcome {} ".format(name)
-    options["SpeechText"]+= get_wish()
-    options["endSession"] = True
-    options["cardTitle"] = "hello {}. ".format(name)
-    options["cardContent"] = "Get a Wish"
-    options["repromptText"] = "How can I help you?"
-    return build_response(options)
-
-def get_wish():
-    time = datetime.datetime.utcnow() 
-    hours = time.hour - 6
-    if hours < 0:
-        hours += 24
-
-    if hours < 12:
-        return "Good Morning. "
-    elif hours < 18:
-        return "Good Afternoon. "
-    else:
-        return "Good Evening. "
     
 
 
 
 def build_response(options):
+    '''
+    Forms the response as per the required format
+    '''
     response={
     "version": "1.0",
     "response": {

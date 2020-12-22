@@ -7,13 +7,15 @@ import boto3
 import os
 
 
-#https://covidtracking.com/data/download
 
 
-# Access envrionment variables from SAM template
+
+# Access environment variables from SAM template
 Covid_bucket = os.environ['bucket']
 sns_smsARN = os.environ['sns_sms']
-#sns_emailARN = os.environ['sns_email']
+r_county = os.environ['County_url']
+r_zipcode = os.environ['Zip_url']
+r_state = os.environ['MO_url']
 
 zip_cases=''
 county_cases=''
@@ -23,20 +25,14 @@ s3 = boto3.resource('s3')
 bucket = s3.Bucket(Covid_bucket)
 key = 'cases.csv'
 
-#import matplotlib.pyplot as plt
-#https://covidti.com/api/public/us/timeseries/Missouri/St.%20louis for county
-r_county = 'https://covid19-us-api.herokuapp.com/county'
-r_zipcode = "https://services2.arcgis.com/w657bnjzrjguNyOy/arcgis/rest/services/covid19_by_zip_expanded_1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
-# r_zipcode = 'https://opendata.arcgis.com/datasets/7ad849e453684ea09f92ac56bd97a08e_0.geojson'
-#https://data-stlcogis.opendata.arcgis.com/datasets/covid-19-zip-code-data-w-past-14-days/geoservice?page=5&selectedAttribute=cases_new
-#r_state =  'https://covidtracking.com/api/states'
-r_state = 'https://covidtracking.com/api/states/daily'
+
+
 now = datetime.now()
 today = date.today()
 time = today.strftime("%m/%d/%y")
 message = ''
-# Setting threshold for number of cases in zip, state and county
 
+# Setting threshold for number of cases in zip, state and county
 # Danger zone
 dangerzone_zip = 50
 dangerzone_state = 1400
@@ -54,19 +50,25 @@ safezone_county = 20
 
 
 def cases_MO(state_url):
-  with requests.get(state_url) as r_state:
-      cases=json.loads(r_state.text)
-      for i in range(len(cases)): 
-          if cases[i]['state']== 'MO': 
-              MO_cases = cases[i]['positiveIncrease']
-              #f.write('The number of new cases in Missouri are '+ "'"+str(MO_cases)+"'"+" on " +str( time) +"\n")        
-              return MO_cases
-              
-	 #json.dump(MO_cases, f, sort_keys = True, indent = 4)
+    '''
+    parameter: URL with Covid-19 data for States in USA
+    output: Number of daily new covid-19 cases in Missouri
+    '''
+    with requests.get(state_url) as r_state:
+        cases=json.loads(r_state.text)
+        for i in range(len(cases)): 
+            if cases[i]['state']== 'MO': 
+                MO_cases = cases[i]['positiveIncrease']
+               #f.write('The number of new cases in Missouri are '+ "'"+str(MO_cases)+"'"+" on " +str( time) +"\n")        
+                return MO_cases
 
 
 
 def cases_zip(zip_url):
+    '''
+    parameter: URL with Covid-19 data for ZipCodes in Missouri
+    output: Number of daily new covid-19 cases in ZipCode 63146
+    '''
     with requests.get(zip_url) as r_zip:
         cases = json.loads(r_zip.text)
         for i in range(len(cases['features'])):
@@ -77,11 +79,11 @@ def cases_zip(zip_url):
                 
 
 
-
-
-
-
 def cases_county(county_url):
+    '''
+    parameter: URL with Covid-19 data for Counties in USA
+    output: Number of daily new covid-19 cases in St. Louis County
+    '''
     with requests.get(county_url) as r_county:
         cases=json.loads(r_county.text)
         for i in range(len(cases['message'])):
@@ -91,6 +93,9 @@ def cases_county(county_url):
 
 
 def notification(text):
+    '''
+    parameters: Text message to SNS Subscriber
+    '''
     try:
         sns = boto3.client('sns')
         sns.publish(TopicArn = sns_smsARN, Message = text)
@@ -104,20 +109,11 @@ def notification(text):
 def lambda_handler(event, context):    
     lamba_local_file = '/tmp/covid_cases.csv'
     s3.Bucket(Covid_bucket).download_file(key,lamba_local_file)
-    # county= cases_county(r_county)
-    # countycases = 0
     try:
         with open (lamba_local_file, 'a') as f:
             csv_writer = csv.writer(f,lineterminator='\n')
             csv_writer.writerow([cases_MO(r_state), cases_county(r_county), cases_zip(r_zipcode),time])
-            #csv_reader = pd.read_csv(lamba_local_file, encoding = 'utf-8').fillna(0)
-            # avg_county_values = csv_reader['County'].iloc[-1:-6:-1].values
-            # if county == 0:
-            #     countycases = sum(avg_county_values)//len(avg_county_values)
-            # else:
-            #     countycases = county
-
-            # csv_writer.writerow([cases_MO(r_state), countycases, cases_zip(r_zipcode),time])
+            
         data = pd.read_csv(lamba_local_file, encoding = 'utf-8').fillna(0)
 
         zc = data['Zip'] .iloc[0:].values
@@ -181,114 +177,14 @@ def lambda_handler(event, context):
     except Exception:
         return None
 
-# condition = True
-# if condition
-#     writer('cases.csv')
-#     condition = False
 
 
-# # Import data
-# if not condition:
-#     data = pd.read_csv('cases.csv', encoding = 'utf-8').fillna(0)
+#https://covidtracking.com/data/download
+#https://covidti.com/api/public/us/timeseries/Missouri/St.%20louis for county
+# r_zipcode = 'https://opendata.arcgis.com/datasets/7ad849e453684ea09f92ac56bd97a08e_0.geojson'
+#https://data-stlcogis.opendata.arcgis.com/datasets/covid-19-zip-code-data-w-past-14-days/geoservice?page=5&selectedAttribute=cases_new
+#r_state =  'https://covidtracking.com/api/states'
 
-
-
-# data = pd.read_csv('cases.csv', encoding = 'utf-8').fillna(0)
-
-# zc = data['Zip'] .iloc[0:].values
-# county = data['County'] .iloc[0:].values
-# state = data['State'] .iloc[0:].values
-
-# hz = data.loc[data['Zip'] == max(zc), 'Date'].iloc[0]
-# hc = data.loc[data['County'] == max(county), 'Date'].iloc[0]
-# hs = data.loc[data['State'] == max(state), 'Date'].iloc[0]
-# #print('Highest number of new cases in MO state is on \'{}\' with \'{}\'\nHighest number of new cases in St.louis county is on \'{}\' with \'{}\'\nHighest number of new cases in 63146 Zip code is on \'{}\' with \'{}\'\n'.format(hs,max(state),hc,max(county),hz,max(zc)))
-
- 
-# cases_today_zip =data.loc[data['Date'] == time, 'Zip'].iloc[0]
-# cases_today_state = data.loc[data['Date'] == time, 'State'].iloc[0]
-# cases_today_county = data.loc[data['Date'] == time, 'County'].iloc[0]
-
-# # Warning for zip code cases
-# if cases_today_zip== max(zc):
-#     print('ZipCode 63146 is in Danger Zone with maximum number of cases \'{}\'! Stay home and Stay safe!\nHighest number of new cases in 63146 Zip code recorded today \'{}\' with \'{}\'\n'.format(cases_today_zip,hz,max(zc)))
-# elif cases_today_zip >= dangerzone_zip:
-#     print('ZipCode 63146 is in Danger Zone with \'{}\' cases! Stay home and Stay safe!\nHighest number of new cases in 63146 Zip code was on \'{}\' with \'{}\'\n'.format(cases_today_zip,hz,max(zc)))
-# elif cases_today_zip <= safezone_zip:
-#     print('ZipCode 63146 is in Safe Zone with \'{}\' cases! Wear a mask and carry Sanitizer while going out.\nHighest number of new cases in 63146 Zip code was on \'{}\' with \'{}\'\n'.format(cases_today_zip,hz,max(zc)))
-# elif cases_today_zip > moderatezone_zip and cases_today_zip < dangerzone_zip:
-#     print('ZipCode 63146 is in Cautious Zone with \'{}\' cases! Wear a mask and carry Sanitizer  while going out.\nHighest number of new cases in 63146 Zip code was on \'{}\' with \'{}\'\n'.format(cases_today_zip,hz,max(zc)))
-# elif cases_today_zip > safezone_zip and cases_today_zip <= moderatezone_zip:
-#     print('ZipCode 63146 is in Moderate Zone with \'{}\' cases! Wear a mask and carry Sanitizer  while going out.\nHighest number of new cases in 63146 Zip code was on \'{}\' with \'{}\'\n'.format(cases_today_zip,hz,max(zc)))
-
-# # Warning for county cases
-# if cases_today_county== max(county):
-#     print('St.Louis County is in Danger Zone with maximum number of cases \'{}\'! Stay home and Stay safe!\nHighest number of new cases in St.louis county recorded today \'{}\' with \'{}\'\n'.format(cases_today_county,hc,max(county))
-# elif cases_today_county >= dangerzone_county:
-#     print('St.Louis County is in Danger Zone with \'{}\' cases! Stay home and Stay safe!\nHighest number of new cases in St.louis county was on \'{}\' with \'{}\'\n'.format(cases_today_county,hc,max(county)))
-# elif cases_today_county <= safezone_county:
-#     print('St.Louis County  is in Safe Zone with \'{}\' cases! Wear a mask and carry Sanitizer while going out.\nHighest number of new cases in St.louis county was on \'{}\' with \'{}\'\n'.format(cases_today_county,hc,max(county)))
-# elif cases_today_county > moderatezone_county and cases_today_county < dangerzone_county:
-#     print('St.Louis County  is in Cautious Zone with \'{}\' cases! Wear a mask and carry Sanitizer  while going out.\nHighest number of new cases in St.louis county was on \'{}\' with \'{}\'\n'.format(cases_today_county,hc,max(county)))
-# elif cases_today_county > safezone_county and cases_today_county <= moderatezone_county:
-#     print('St.Louis County  is in Moderate Zone with \'{}\' cases! Wear a mask and carry Sanitizer  while going out.\nHighest number of new cases in St.louis county was on \'{}\' with \'{}\'\n'.format(cases_today_county,hc,max(county)))
-
-# #print(max(zc),max(county),max(state))
-
-# # Warning for State cases
-# if cases_today_state == max(state):
-#     print('Missouri state is in Danger Zone with maximum number of cases \'{}\'! Stay home and Stay safe!\nHighest number of new cases in MO state recorded today \'{}\' with \'{}\'\n'.format(cases_today_state,hs,max(state))
-# elif cases_today_state >= dangerzone_state:
-#     print('Missouri state is in Danger Zone with \'{}\' cases! Stay home and Stay safe!\nHighest number of new cases in MO state was on \'{}\' with \'{}\'\n'.format(cases_today_state,hs,max(state)))
-# elif cases_today_state<= safezone_state:
-#     print('Missouri state is in Safe Zone with \'{}\' cases! Wear a mask and carry Sanitizer while going out.\nHighest number of new cases in MO state was on \'{}\' with \'{}\'\n'.format(cases_today_state,hs,max(state)))
-# elif cases_today_state > moderatezone_state and cases_today_state < dangerzone_state:
-#     print('Missouri state  is in Cautious Zone with \'{}\' cases! Wear a mask and carry Sanitizer while going out.\nHighest number of new cases in MO state was on \'{}\' with \'{}\'\n'.format(cases_today_state,hs,max(state)))
-# elif cases_today_state > safezone_state and cases_today_state <= moderatezone_state:
-#     print('Missouri state  is in Moderate Zone with \'{}\' cases! Wear a mask and carry Sanitizer while going out.\nHighest number of new cases in MO state was on \'{}\' with \'{}\'\n'.format(cases_today_state,hs,max(state)))
-
-
-
-# Graph plottinf=g
-# x = data['Zip'] #.iloc[0:10].values
-# y = data['Date'] #.iloc[0:10].values
-# z = data['County']
-# s = data['State']
-
-# fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
-# fig.suptitle('Plot of historic covid-19 data till today', color='crimson', fontname="Times New Roman",fontweight="bold")
-# ax1.plot(y, x, color='mediumvioletred')
-# ax1.legend(['Zipcode: 63146'])
-# ax1.xaxis.set_tick_params(rotation=18, labelsize=10)
-
-
-# ax2.plot(y,z,color='blue')
-# ax2.legend(['County'])
-# ax2.xaxis.set_tick_params(rotation=18, labelsize=10)
-
-# ax3.plot(y,s,color='brown')
-# ax3.legend(['Missouri'])
-# ax3.xaxis.set_tick_params(rotation=18, labelsize=10)
-
-# for ax in (ax1, ax2, ax3):
-#     ax.set(xlabel='Dates', ylabel='New Covid-19 cases daily')
-
-# plt.show()
-# #fig.savefig("plot.png")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Lib in python Dash app
+# r_county = 'https://covid19-us-api.herokuapp.com/county'
+# r_zipcode = "https://services2.arcgis.com/w657bnjzrjguNyOy/arcgis/rest/services/covid19_by_zip_expanded_1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+# r_state = 'https://covidtracking.com/api/states/daily'
