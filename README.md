@@ -1,4 +1,4 @@
-# Covid-19 Notification System using AWS Cloud, Alexa Skill Kit, and Time Series Forecasting
+# Covid-19 Notification System using AWS Cloud, Alexa Skill Kit, and Facebook Prophet
 
 ### Programmed AWS Lambda in Python, to collect Covid-19 data from open source API's for my State, County and Zip Code and store in AWS S3. Send an alert message with the daily new Covid-19 cases along with a customized prevention message as per the number of cases as an SMS to my mobile phone using Amazon SNS.
 
